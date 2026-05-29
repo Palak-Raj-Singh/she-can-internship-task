@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-card form-container">
+        <div class="logo-wrapper">
+            <img src="logo.png" alt="She Can Foundation Logo" class="brand-logo">
+        </div>
+
+        <div class="text-center mb-6">
+            <h2 class="brand-heading" style="margin-top:0;">Portal Gateway</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Authorized Administrative Personnel Only</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="field-wrapper">
+                <label class="field-label">Secret Access Key</label>
+                <input type="password" id="adminPassword" class="form-input" placeholder="••••••••" required>
+                <div id="loginError" class="error-text hidden">Invalid administrative credentials.</div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="margin-top: 1rem;">Authenticate Security Token</button>
+        </form>
+        
+        <div class="text-center" style="margin-top: 1.5rem;">
+            <a href="index.html" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">← Public Application Form</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const errorLabel = document.getElementById('loginError');
+
+            // Ping the backend server data endpoint to verify if this password works
+            const res = await fetch('/api/admin/data', {
+                headers: { 'Authorization': password }
+            });
+
+            if (res.ok) {
+                // If password is good, store it securely in session storage and enter dashboard
+                sessionStorage.setItem('adminToken', password);
+                window.location.href = 'admin.html';
+            } else {
+                // Show clean validation error message
+                errorLabel.classList.remove('hidden');
+                document.getElementById('adminPassword').classList.add('input-error');
+            }
+        });
+    </script>
+</body>
+</html>
